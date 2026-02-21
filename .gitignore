@@ -1,0 +1,6 @@
+squirrel-rebellion/node_modules/
+squirrel-rebellion/dist/
+squirrel-rebellion/.DS_Store
+squirrel-rebellion/*.log
+squirrel-rebellion/.env
+squirrel-rebellion/.vite/
