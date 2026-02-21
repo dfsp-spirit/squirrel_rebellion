@@ -7,6 +7,7 @@ export class MainMenu extends Scene
     title: GameObjects.Text;
     startButton: GameObjects.Text;
     creditsButton: GameObjects.Text;
+    settingsButton: GameObjects.Text;
 
     constructor ()
     {
@@ -17,10 +18,11 @@ export class MainMenu extends Scene
     {
         this.cameras.main.setBackgroundColor(0x111111); // around the image
         this.background = this.add.image(512, 450, 'background');
+        this.logo = this.add.image(512, 200, 'logo').setDisplaySize(400, 200);
 
 
         //this.logo = this.add.image(512, 400, 'logo');
-        const menuStartY = 580;
+        const menuStartY = 400;
         const menuItemsYDistance = 60;
 
         this.title = this.add.text(512, menuStartY, 'Main Menu', {
@@ -41,8 +43,20 @@ export class MainMenu extends Scene
         .on('pointerout', () => this.startButton.setStyle({ color: '#ffffff' }))
         .on('pointerdown', () => this.scene.start('Game'));
 
+        // Settings Button
+        this.settingsButton = this.add.text(512, menuStartY + 2 * menuItemsYDistance, 'Settings', {
+            fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 6,
+            align: 'center'
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerover', () => this.settingsButton.setStyle({ color: '#ff0' }))
+        .on('pointerout', () => this.settingsButton.setStyle({ color: '#ffffff' }))
+        .on('pointerdown', () => this.scene.start('Settings'));
+
         // Credits button
-        this.creditsButton = this.add.text(512, menuStartY + 2 * menuItemsYDistance, 'Credits', {
+        this.creditsButton = this.add.text(512, menuStartY + 3 * menuItemsYDistance, 'Credits', {
             fontFamily: 'Arial Black', fontSize: 32, color: '#ffffff',
             stroke: '#000000', strokeThickness: 6,
             align: 'center'
