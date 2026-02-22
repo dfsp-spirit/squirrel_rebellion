@@ -17,8 +17,10 @@ export class Settings extends Scene
     ultraButton: GameObjects.Text;
     difficultyDescription: GameObjects.Text;
 
-    // Visual indicator for selected difficulty
-    selectorBox: GameObjects.Rectangle;
+    // Store original colors for each button
+    private easyColor: number = 0xffffff;
+    private normalColor: number = 0xffffff;
+    private ultraColor: number = 0xffffff;
 
     constructor ()
     {
@@ -50,12 +52,11 @@ export class Settings extends Scene
         // Create difficulty selection buttons in a row
         const buttonY = settingsLinesStartY + settingsLinesSpacing;
 
-        // Easy button
+        // Easy button - no background color
         this.easyButton = this.add.text(312, buttonY, 'Easy', {
             fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
             stroke: '#000000', strokeThickness: 6,
             align: 'center',
-            backgroundColor: '#333333',
             padding: { left: 20, right: 20, top: 10, bottom: 10 }
         })
         .setOrigin(0.5)
@@ -64,12 +65,11 @@ export class Settings extends Scene
         .on('pointerout', () => this.resetDifficultyStyles())
         .on('pointerdown', () => this.setDifficulty('easy'));
 
-        // Normal button
+        // Normal button - no background color
         this.normalButton = this.add.text(512, buttonY, 'Normal', {
             fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
             stroke: '#000000', strokeThickness: 6,
             align: 'center',
-            backgroundColor: '#333333',
             padding: { left: 20, right: 20, top: 10, bottom: 10 }
         })
         .setOrigin(0.5)
@@ -78,12 +78,11 @@ export class Settings extends Scene
         .on('pointerout', () => this.resetDifficultyStyles())
         .on('pointerdown', () => this.setDifficulty('normal'));
 
-        // Ultra Violence button
+        // Ultra Violence button - no background color
         this.ultraButton = this.add.text(712, buttonY, 'Ultra Violence', {
             fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
             stroke: '#000000', strokeThickness: 6,
             align: 'center',
-            backgroundColor: '#333333',
             padding: { left: 20, right: 20, top: 10, bottom: 10 }
         })
         .setOrigin(0.5)
@@ -112,31 +111,24 @@ export class Settings extends Scene
         })
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true })
-        .on('pointerover', () => this.backButton.setStyle({ color: '#666666' }))
+        .on('pointerover', () => this.backButton.setStyle({ color: '#ffaa00' }))
         .on('pointerout', () => this.backButton.setStyle({ color: '#ffffff' }))
         .on('pointerdown', () => this.scene.start('MainMenu'));
     }
 
     hoverDifficulty(difficulty: 'easy' | 'normal' | 'ultra-violence') {
-        this.resetDifficultyStyles();
-
-        // Highlight the hovered button without changing selection
-        if (difficulty === 'easy') {
-            this.easyButton.setStyle({ backgroundColor: '#555555' });
-        } else if (difficulty === 'normal') {
-            this.normalButton.setStyle({ backgroundColor: '#555555' });
-        } else {
-            this.ultraButton.setStyle({ backgroundColor: '#555555' });
+        // Temporarily change color on hover (only if not already selected)
+        if (difficulty === 'easy' && GameState.difficulty !== 'easy') {
+            this.easyButton.setStyle({ color: '#88ff88' }); // Light green
+        } else if (difficulty === 'normal' && GameState.difficulty !== 'normal') {
+            this.normalButton.setStyle({ color: '#ffff88' }); // Light yellow
+        } else if (difficulty === 'ultra-violence' && GameState.difficulty !== 'ultra-violence') {
+            this.ultraButton.setStyle({ color: '#ff8888' }); // Light red
         }
     }
 
     resetDifficultyStyles() {
-        // Reset all buttons to default style
-        this.easyButton.setStyle({ backgroundColor: '#333333' });
-        this.normalButton.setStyle({ backgroundColor: '#333333' });
-        this.ultraButton.setStyle({ backgroundColor: '#333333' });
-
-        // Re-apply selected style
+        // Reset to current selection styling
         this.updateDifficultyDisplay();
     }
 
@@ -146,36 +138,50 @@ export class Settings extends Scene
     }
 
     updateDifficultyDisplay() {
-        // Reset all buttons
-        this.easyButton.setStyle({ backgroundColor: '#333333' });
-        this.normalButton.setStyle({ backgroundColor: '#333333' });
-        this.ultraButton.setStyle({ backgroundColor: '#333333' });
-
-        // Highlight selected button
+        // Set colors based on selection
+        // Easy button
         if (GameState.difficulty === 'easy') {
-            this.easyButton.setStyle({ backgroundColor: '#4CAF50' }); // Green
-        } else if (GameState.difficulty === 'normal') {
-            this.normalButton.setStyle({ backgroundColor: '#FFC107' }); // Yellow
+            this.easyButton.setStyle({ color: '#4CAF50' }); // Green
         } else {
-            this.ultraButton.setStyle({ backgroundColor: '#F44336' }); // Red
+            this.easyButton.setStyle({ color: '#ffffff' }); // White
+        }
+
+        // Normal button
+        if (GameState.difficulty === 'normal') {
+            this.normalButton.setStyle({ color: '#FFC107' }); // Yellow
+        } else {
+            this.normalButton.setStyle({ color: '#ffffff' }); // White
+        }
+
+        // Ultra Violence button
+        if (GameState.difficulty === 'ultra-violence') {
+            this.ultraButton.setStyle({ color: '#F44336' }); // Red
+        } else {
+            this.ultraButton.setStyle({ color: '#ffffff' }); // White
         }
 
         // Update description
         let description = '';
+        let descriptionColor = '#aaaaaa';
+
         switch(GameState.difficulty) {
             case 'easy':
-                description = '☺ Relaxed gameplay, more health, forgiving enemies';
+                description = 'Relaxed gameplay, more health, forgiving enemies';
+                descriptionColor = '#4CAF50';
                 break;
             case 'normal':
-                description = '★ Balanced challenge, as intended';
+                description = 'Balanced challenge, as intended';
+                descriptionColor = '#FFC107';
                 break;
             case 'ultra-violence':
-                description = '☠ Hardcore mode, tough enemies, limited resources';
+                description = 'Hardcore mode, tough enemies, limited resources';
+                descriptionColor = '#F44336';
                 break;
         }
 
         if (this.difficultyDescription) {
             this.difficultyDescription.setText(description);
+            this.difficultyDescription.setStyle({ color: descriptionColor });
         }
     }
 }
